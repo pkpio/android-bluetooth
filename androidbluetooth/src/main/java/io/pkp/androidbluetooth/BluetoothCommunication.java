@@ -336,7 +336,6 @@ public class BluetoothCommunication {
         private final BluetoothDevice mmDevice;
         private String mSocketType;
 
-        @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
         public ConnectThread(BluetoothDevice device, boolean secure) {
             mmDevice = device;
             BluetoothSocket tmp = null;

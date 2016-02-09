@@ -14,13 +14,11 @@ android {
     resourcePrefix "android-bluetooth__"
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 1
         versionName version
 
-    }
-    buildTypes {
     }
 }
 
@@ -33,7 +31,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "android-bluetooth"
+        name = "AndroidBluetooth"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

@@ -1,13 +1,11 @@
 package io.pkp.androidbluetooth;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +172,6 @@ public class BluetoothSetup {
      * @param device           BluetoothDevice
      * @param onBTBondListener Listener to receive callbacks for actions
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void bond(BluetoothDevice device, OnBTBondListener onBTBondListener) {
         this.mOnBTBondListener = onBTBondListener;
 
