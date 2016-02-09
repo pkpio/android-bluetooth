@@ -1,12 +1,10 @@
 package io.pkp.androidbluetooth;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import java.io.IOException;
@@ -168,13 +166,13 @@ public class BluetoothCommunication {
 
         // Notify the listener activity
         if (mOnBTClientListener != null)
-            mOnBTClientListener.onConnected(device);
+            mOnBTClientListener.onClientConnected(device);
         else if (mOnBTServerListener != null)
-            mOnBTServerListener.onConnected(device);
+            mOnBTServerListener.onServerConnected(device);
     }
 
     /**
-     * Stop all threads
+     * Stop all internal work and cleanup.
      */
     public synchronized void stop() {
         Log.d(DEBUG_TAG, "stop");
@@ -198,10 +196,9 @@ public class BluetoothCommunication {
     }
 
     /**
-     * Write to the ConnectedThread in an unsynchronized manner
+     * Write to the connected device in an unsynchronized manner
      *
-     * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
+     * @param out The bytes to be written
      */
     public void write(byte[] out) {
         // Create temporary object
@@ -221,7 +218,7 @@ public class BluetoothCommunication {
     private void connectionFailed(BluetoothDevice device) {
         // Notify the listener activity
         if (mOnBTClientListener != null)
-            mOnBTClientListener.onConnectionFailed(device);
+            mOnBTClientListener.onClientConnectionFailed(device);
 
         // Start the service over to restart listening mode
         BluetoothCommunication.this.startServer();
@@ -233,9 +230,9 @@ public class BluetoothCommunication {
     private void connectionLost() {
         // Notify the listener activity
         if (mOnBTClientListener != null)
-            mOnBTClientListener.onConnectionLost();
+            mOnBTClientListener.onClientConnectionLost();
         else if (mOnBTServerListener != null)
-            mOnBTServerListener.onConnectionLost();
+            mOnBTServerListener.onServerConnectionLost();
 
         // Start the service over to restart listening mode
         BluetoothCommunication.this.startServer();
@@ -438,9 +435,9 @@ public class BluetoothCommunication {
                     bytes = mmInStream.read(buffer);
 
                     if (mOnBTClientListener != null)
-                        mOnBTClientListener.onDataReceived(bytes, buffer);
+                        mOnBTClientListener.onClientDataReceived(bytes, buffer);
                     else if (mOnBTServerListener != null)
-                        mOnBTServerListener.onDataReceived(bytes, buffer);
+                        mOnBTServerListener.onServerDataReceived(bytes, buffer);
 
                 } catch (IOException e) {
                     Log.e(DEBUG_TAG, "disconnected", e);

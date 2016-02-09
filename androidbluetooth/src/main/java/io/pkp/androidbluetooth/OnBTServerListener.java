@@ -7,9 +7,9 @@ import android.bluetooth.BluetoothDevice;
  */
 public interface OnBTServerListener {
 
-    public void onConnected(BluetoothDevice device);
+    public void onServerConnected(BluetoothDevice device);
 
-    public void onConnectionLost();
+    public void onServerConnectionLost();
 
-    public void onDataReceived(int length, byte[] data);
+    public void onServerDataReceived(int length, byte[] data);
 }

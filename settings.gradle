@@ -1,1 +1,1 @@
-include ':androidbluetooth'
+include ':androidbluetooth', ':example'

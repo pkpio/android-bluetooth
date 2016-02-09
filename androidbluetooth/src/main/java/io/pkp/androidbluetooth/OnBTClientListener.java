@@ -7,11 +7,11 @@ import android.bluetooth.BluetoothDevice;
  */
 public interface OnBTClientListener {
 
-    public void onConnected(BluetoothDevice device);
+    public void onClientConnected(BluetoothDevice device);
 
-    public void onConnectionFailed(BluetoothDevice device);
+    public void onClientConnectionFailed(BluetoothDevice device);
 
-    public void onConnectionLost();
+    public void onClientConnectionLost();
 
-    public void onDataReceived(int length, byte[] data);
+    public void onClientDataReceived(int length, byte[] data);
 }
