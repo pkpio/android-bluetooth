@@ -4,7 +4,7 @@ import java.util.UUID;
 
 /**
  * Bluetooth params
- * Created by praveen on 08.02.16.
+ * Created by praveen on 09.02.16.
  */
 public class Params {
     public static final int BLUETOOTH_VISIBILITY_TIMEOUT = 300; //  How long the device is visible

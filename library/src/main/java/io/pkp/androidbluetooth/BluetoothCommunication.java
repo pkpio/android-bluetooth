@@ -1,10 +1,12 @@
 package io.pkp.androidbluetooth;
 
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.IOException;
@@ -12,12 +14,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by praveen on 29.06.15.
- * <p/>
  * Abstracts all Bluetooth Communication related work
  */
 public class BluetoothCommunication {
-    final String TAG = this.getClass().getName();
+    final String DEBUG_TAG = this.getClass().getName();
 
     // Received from caller
     Context mContext;
@@ -59,7 +59,7 @@ public class BluetoothCommunication {
      * Starts a bluetooth server that can accept incoming connections
      */
     private synchronized void startServer() {
-        Log.d(TAG, "start");
+        Log.d(DEBUG_TAG, "start");
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
@@ -89,7 +89,7 @@ public class BluetoothCommunication {
      * @param state An integer defining the current connection state
      */
     private synchronized void setState(int state) {
-        Log.d(TAG, "setState() " + mState + " -> " + state);
+        Log.d(DEBUG_TAG, "setState() " + mState + " -> " + state);
         mState = state;
     }
 
@@ -109,7 +109,7 @@ public class BluetoothCommunication {
      */
     public synchronized void connect(BluetoothDevice device, boolean secure,
                                      OnBTClientListener onBTClientListener) {
-        Log.d(TAG, "connect to: " + device);
+        Log.d(DEBUG_TAG, "connect to: " + device);
         this.mOnBTClientListener = onBTClientListener;
 
         // Cancel any thread attempting to make a connection
@@ -140,7 +140,7 @@ public class BluetoothCommunication {
      */
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device, final String socketType) {
-        Log.d(TAG, "connected, Socket Type:" + socketType);
+        Log.d(DEBUG_TAG, "connected, Socket Type:" + socketType);
 
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
@@ -177,7 +177,7 @@ public class BluetoothCommunication {
      * Stop all threads
      */
     public synchronized void stop() {
-        Log.d(TAG, "stop");
+        Log.d(DEBUG_TAG, "stop");
 
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -265,13 +265,13 @@ public class BluetoothCommunication {
                             Params.BLUETOOTH_UUID);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
+                Log.e(DEBUG_TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
             mmServerSocket = tmp;
         }
 
         public void run() {
-            Log.d(TAG, "Socket Type: " + mSocketType +
+            Log.d(DEBUG_TAG, "Socket Type: " + mSocketType +
                     "BEGIN mAcceptThread" + this);
             setName("AcceptThread" + mSocketType);
 
@@ -284,7 +284,7 @@ public class BluetoothCommunication {
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
+                    Log.e(DEBUG_TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     break;
                 }
 
@@ -304,23 +304,23 @@ public class BluetoothCommunication {
                                 try {
                                     socket.close();
                                 } catch (IOException e) {
-                                    Log.e(TAG, "Could not close unwanted socket", e);
+                                    Log.e(DEBUG_TAG, "Could not close unwanted socket", e);
                                 }
                                 break;
                         }
                     }
                 }
             }
-            Log.i(TAG, "END mAcceptThread, socket Type: " + mSocketType);
+            Log.i(DEBUG_TAG, "END mAcceptThread, socket Type: " + mSocketType);
 
         }
 
         public void cancel() {
-            Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
+            Log.d(DEBUG_TAG, "Socket Type" + mSocketType + "cancel " + this);
             try {
                 mmServerSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
+                Log.e(DEBUG_TAG, "Socket Type" + mSocketType + "close() of server failed", e);
             }
         }
     }
@@ -336,6 +336,7 @@ public class BluetoothCommunication {
         private final BluetoothDevice mmDevice;
         private String mSocketType;
 
+        @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
         public ConnectThread(BluetoothDevice device, boolean secure) {
             mmDevice = device;
             BluetoothSocket tmp = null;
@@ -352,13 +353,13 @@ public class BluetoothCommunication {
                             Params.BLUETOOTH_UUID);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
+                Log.e(DEBUG_TAG, "Socket Type: " + mSocketType + "create() failed", e);
             }
             mmSocket = tmp;
         }
 
         public void run() {
-            Log.i(TAG, "BEGIN mConnectThread SocketType:" + mSocketType);
+            Log.i(DEBUG_TAG, "BEGIN mConnectThread SocketType:" + mSocketType);
             setName("ConnectThread" + mSocketType);
 
             // Always cancel discovery because it will slow down a connection
@@ -374,7 +375,7 @@ public class BluetoothCommunication {
                 try {
                     mmSocket.close();
                 } catch (IOException e2) {
-                    Log.e(TAG, "unable to close() " + mSocketType +
+                    Log.e(DEBUG_TAG, "unable to close() " + mSocketType +
                             " socket during connection failure", e2);
                 }
                 connectionFailed(mmDevice);
@@ -394,7 +395,7 @@ public class BluetoothCommunication {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
+                Log.e(DEBUG_TAG, "close() of connect " + mSocketType + " socket failed", e);
             }
         }
     }
@@ -409,7 +410,7 @@ public class BluetoothCommunication {
         private final OutputStream mmOutStream;
 
         public ConnectedThread(BluetoothSocket socket, String socketType) {
-            Log.d(TAG, "create ConnectedThread: " + socketType);
+            Log.d(DEBUG_TAG, "create ConnectedThread: " + socketType);
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -419,7 +420,7 @@ public class BluetoothCommunication {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "temp sockets not created", e);
+                Log.e(DEBUG_TAG, "temp sockets not created", e);
             }
 
             mmInStream = tmpIn;
@@ -427,7 +428,7 @@ public class BluetoothCommunication {
         }
 
         public void run() {
-            Log.i(TAG, "BEGIN mConnectedThread");
+            Log.i(DEBUG_TAG, "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
 
@@ -443,7 +444,7 @@ public class BluetoothCommunication {
                         mOnBTServerListener.onDataReceived(bytes, buffer);
 
                 } catch (IOException e) {
-                    Log.e(TAG, "disconnected", e);
+                    Log.e(DEBUG_TAG, "disconnected", e);
                     connectionLost();
                     // Start the service over to restart listening mode
                     BluetoothCommunication.this.startServer();
@@ -461,7 +462,7 @@ public class BluetoothCommunication {
             try {
                 mmOutStream.write(buffer);
             } catch (IOException e) {
-                Log.e(TAG, "Exception during write", e);
+                Log.e(DEBUG_TAG, "Exception during write", e);
             }
         }
 
@@ -469,7 +470,7 @@ public class BluetoothCommunication {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
+                Log.e(DEBUG_TAG, "close() of connect socket failed", e);
             }
         }
     }

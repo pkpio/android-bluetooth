@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by praveen on 25.06.15.
- * <p/>
  * This class does all the work related to listing and pairing up with a new
  * Bluetooth device
  */
@@ -171,7 +169,6 @@ public class BluetoothSetup {
 
     /**
      * Bonds with the given bluetooth device
-     * <p/>
      * -TODO- Method for pre-kitkat devices
      *
      * @param device           BluetoothDevice
